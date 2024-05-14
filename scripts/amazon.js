@@ -1,4 +1,6 @@
-
+import { cart, addToCart } from "../data/cart.js";
+import { products } from "../data/products.js";
+import { formatCurrency } from "./utils/money.js";
 
 let productsHTML = ''
 
@@ -23,7 +25,7 @@ products.forEach((product) => {
     </div>
 
     <div class="product-price">
-        $${(product.priceCents / 100).toFixed(2)}
+        $${formatCurrency(product.priceCents)}
     </div>
 
     <div class="product-quantity-container">
@@ -53,43 +55,27 @@ products.forEach((product) => {
   </button>
 </div>
     `
-})
+});
 
 document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
-document.querySelectorAll('.js-add-to-cart').forEach((button) => {
-    let addedMessageTimeoutId;
+function updateCartQuantity() {
+  let cartQuantity = 0;
 
-    button.addEventListener('click', () => {
-        const {productId} = button.dataset;
-        let matchingItems;
-
-        cart.forEach((item) => {
-            if(productId === item.productId) {
-                matchingItems = item;
-            }
-        });
-
-        const quantitySelector = document.querySelector(`.js-quantity-selector-${productId}`);
-        // the class used in the "select" element is product.id but here must be productId
-        const quantity = Number(quantitySelector.value);
-
-        if (matchingItems) {
-            matchingItems.quantity += quantity;
-        } else {
-            cart.push({
-                productId,
-                quantity
-            });
-        };
-
-        let cartQuantity = 0;
-
-        cart.forEach((item) => {
-          cartQuantity += item.quantity;
+        cart.forEach((cartItem) => {
+          cartQuantity += cartItem.quantity;
         })
 
         document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+}
+
+document.querySelectorAll('.js-add-to-cart').forEach((button) => {
+    let addedMessageTimeoutId;
+    
+    button.addEventListener('click', () => {
+        const {productId} = button.dataset;
+        addToCart(productId);
+        updateCartQuantity()
 
         const addedMessage = document.querySelector(`.js-added-to-cart-${productId}`);
 
