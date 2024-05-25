@@ -38,10 +38,10 @@ export function addToCart(productId) {
           };
 
           saveToStorage();
-  }
+}
 
   // I missed the parameter lol
-  export function removeFromCart(productId) {
+export function removeFromCart(productId) {
     const newCart = [];
     
     cart.forEach((cartItem) => {
@@ -52,6 +52,31 @@ export function addToCart(productId) {
 
     cart = newCart;
 
+    saveToStorage();
+}
+
+export function calculateCartQuantity(){
+    let cartQuantity = 0;
+
+    cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity;
+    });
+
+    return cartQuantity;
+    // I missed the return lol
+}
+
+export function updateQuantity(productId, newQuantity) {
+    let matchingItem;
+  
+    cart.forEach((cartItem) => {
+      if (productId === cartItem.productId) {
+        matchingItem = cartItem;
+      }
+    });
+  
+    matchingItem.quantity = newQuantity;
+  
     saveToStorage();
   }
 
